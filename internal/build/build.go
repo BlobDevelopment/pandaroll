@@ -1,6 +1,6 @@
 package build
 
 var (
-	Release string = "0.0.0"
+	Version string = "0.0.0"
 	Commit  string = "<development>"
 )

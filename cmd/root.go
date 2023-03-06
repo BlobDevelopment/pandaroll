@@ -20,7 +20,7 @@ var config entity.Config
 
 func Execute() {
 	logger.Info("## Pandaroll ##")
-	logger.Infof("#  Release: %s", build.Release)
+	logger.Infof("#  Version: %s", build.Version)
 	logger.Infof("#  Commit: %s", build.Commit)
 	logger.Info("")
 

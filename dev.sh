@@ -1,6 +1,6 @@
 #!/bin/bash
 
-go build -o ./bin/pandaroll
+make build
 
 DBMS=postgres \
     DB_HOST=0.0.0.0 \
