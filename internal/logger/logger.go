@@ -1,8 +1,8 @@
 package logger
 
 import (
+	"errors"
 	"fmt"
-	"os"
 )
 
 func Info(msg string) {
@@ -21,12 +21,10 @@ func Errorf(format string, args ...any) {
 	fmt.Printf("[ERROR] "+format+"\n", args...)
 }
 
-func Fatal(msg string) {
-	Error(msg)
-	os.Exit(1)
+func Fatal(msg string) error {
+	return errors.New(msg)
 }
 
-func Fatalf(format string, args ...any) {
-	Errorf(format, args...)
-	os.Exit(1)
+func Fatalf(format string, args ...any) error {
+	return fmt.Errorf(format+"\n", args...)
 }

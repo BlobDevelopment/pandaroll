@@ -14,6 +14,9 @@ var rootCmd = &cobra.Command{
 	Use:   "pandaroll",
 	Short: "Easy database migrations",
 	Long:  `Pandaroll is an easy migration tool`,
+	// hack: Silence usage so on error it doesn't spit it up
+	// https://github.com/spf13/cobra/issues/340
+	SilenceUsage: true,
 }
 
 var config entity.Config
@@ -103,29 +106,33 @@ func init() {
 	})
 }
 
+func NewRootCommand() *cobra.Command {
+	return rootCmd
+}
+
 func GetConfig() entity.Config {
 	return config
 }
 
-func ValidateConfig() entity.Config {
+func ValidateConfig() (entity.Config, error) {
 	if config.DBMS == "" {
-		logger.Fatal("The --dbms flag or DBMS environment variable needs to be set!")
+		return config, logger.Fatal("The --dbms flag or DBMS environment variable needs to be set!")
 	}
 	if config.Host == "" {
-		logger.Fatal("The --host flag or DB_HOST environment variable needs to be set!")
+		return config, logger.Fatal("The --host flag or DB_HOST environment variable needs to be set!")
 	}
 	if config.Port == 0 {
-		logger.Fatal("The --port flag or DB_PORT environment variable needs to be set!")
+		return config, logger.Fatal("The --port flag or DB_PORT environment variable needs to be set!")
 	}
 	if config.Username == "" {
-		logger.Fatal("The --username flag or DB_USERNAME environment variable needs to be set!")
+		return config, logger.Fatal("The --username flag or DB_USERNAME environment variable needs to be set!")
 	}
 	if config.Password == "" {
-		logger.Fatal("The --password flag or DB_PASSWORD environment variable needs to be set!")
+		return config, logger.Fatal("The --password flag or DB_PASSWORD environment variable needs to be set!")
 	}
 	if config.Database == "" {
-		logger.Fatal("The --database flag or DB_DATABASE environment variable needs to be set!")
+		return config, logger.Fatal("The --database flag or DB_DATABASE environment variable needs to be set!")
 	}
 
-	return config
+	return config, nil
 }
