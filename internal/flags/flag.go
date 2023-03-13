@@ -39,17 +39,16 @@ func NewIntFlag(cmd *cobra.Command, variable *int, flag Flag) {
 	if *variable == 0 {
 		tmp := os.Getenv(flag.EnvVar)
 
-		// If it isn't set, that's ok.
-		if tmp == "" {
-			return
-		}
+		// If the env var is set, try to use it
+		if tmp != "" {
+			intVal, err := strconv.Atoi(tmp)
+			if err != nil {
+				logger.Fatal(flag.FullName + " needs to be an integer")
+				return
+			}
 
-		intVal, err := strconv.Atoi(tmp)
-		if err != nil {
-			logger.Fatal(flag.FullName + " needs to be an integer")
+			*variable = intVal
 		}
-
-		*variable = intVal
 	}
 
 	// Flag and env var not set, look for default
