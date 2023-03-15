@@ -1,6 +1,6 @@
 name: \U0001F4A1 Feature request
 description: Suggest a feature or enhancement for Pandaroll
-title: "[FEATURE] <title>"
+title: "[FR] <title>"
 labels: [Feature Request]
 body:
 - type: checkboxes
@@ -18,7 +18,7 @@ body:
     required: true
 - type: textarea
   attributes:
-    label: **Additional context**
+    label: Additional context
     description: Add any other context or screenshots about the feature request here.
   validations:
-    required: true
+    required: false
