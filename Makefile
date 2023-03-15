@@ -8,7 +8,7 @@ build:
 	$(eval VERSION=$(shell git describe --exact-match --tags $(git log -n1 --pretty='%h') || echo 'development'))
 	$(eval COMMIT_HASH=$(shell git rev-parse HEAD))
 
-	go build \
+	GOOS="${GOOS}" GOARCH="${GOARCH}" go build \
 		-o bin/pandaroll \
 		-ldflags="-X 'blobdev.com/pandaroll/internal/build.Version=$(VERSION)'" \
 		-ldflags="-X 'blobdev.com/pandaroll/internal/build.Commit=$(COMMIT_HASH)'"
