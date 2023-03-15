@@ -6,7 +6,7 @@ TODO
 
 ### Docker
 
-Pandaroll is published on [Docker Hub]() for easy use.
+Pandaroll is published on [Docker Hub](https://hub.docker.com/r/blobdev/pandaroll) for easy use.
 
 Running standalone:
 
