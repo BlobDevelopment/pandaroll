@@ -15,3 +15,4 @@ RUN apk add make git && \
     rm -rf cmd internal vendor
 
 ENTRYPOINT [ "./bin/pandaroll" ]
+CMD [ "migrate" ]
