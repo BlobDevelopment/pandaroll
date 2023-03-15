@@ -53,6 +53,6 @@ jobs:
             linux/arm/v7
             linux/arm64/v8
           tags: |
-            blobdev/pandaroll-test:latest
-            blobdev/pandaroll-test:${{ steps.versions.outputs.CURRENT_VERSION }}
-            blobdev/pandaroll-test:${{ steps.versions.outputs.MAJOR_VERSION }}
+            blobdev/pandaroll:latest
+            blobdev/pandaroll:${{ steps.versions.outputs.CURRENT_VERSION }}
+            blobdev/pandaroll:${{ steps.versions.outputs.MAJOR_VERSION }}
