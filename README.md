@@ -31,7 +31,7 @@ services:
 
   db-migrator:
     container_name: migrator
-    image: blobdev/pandaroll:v1
+    image: blobdev/pandaroll:1
     depends_on:
       - db
     environment:
