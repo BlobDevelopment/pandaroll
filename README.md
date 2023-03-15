@@ -11,7 +11,7 @@ Pandaroll is published on [Docker Hub](https://hub.docker.com/r/blobdev/pandarol
 Running standalone:
 
 ```bash
-$ docker run blobdev/pandaroll:v1 migrate
+$ docker run blobdev/pandaroll:1 migrate
 ```
 
 Running with `docker-compose.yml`
