@@ -70,7 +70,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup GO
+      - name: Setup Go
         uses: actions/setup-go@v3
         with:
           go-version: '1.19'
@@ -86,7 +86,7 @@ jobs:
             filename="$filename.exe"
           fi
 
-          echo "binary=$filename" >> "$GITHUB_OUTPUT"
+          echo "filename=$filename" >> "$GITHUB_OUTPUT"
       
       - name: Upload binary
         id: upload-release-asset
@@ -95,4 +95,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           file: ./bin/pandaroll
-          asset_name: ${{ steps.name.outputs.binary }} 
+          asset_name: ${{ steps.name.outputs.filename }} 
