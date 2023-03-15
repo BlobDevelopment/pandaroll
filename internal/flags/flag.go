@@ -1,10 +1,10 @@
 package flags
 
 import (
-	"log"
 	"os"
 	"strconv"
 
+	"blobdev.com/pandaroll/internal/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +20,7 @@ func NewStringFlag(cmd *cobra.Command, variable *string, flag Flag) {
 	cmd.PersistentFlags().StringVarP(variable, flag.FullName, flag.ShortName, "", flag.Usage)
 
 	// Flag not set, try env var
-	if *variable == "" {
+	if *variable == "" && flag.EnvVar != "" {
 		*variable = os.Getenv(flag.EnvVar)
 	}
 
@@ -33,23 +33,22 @@ func NewStringFlag(cmd *cobra.Command, variable *string, flag Flag) {
 }
 
 func NewIntFlag(cmd *cobra.Command, variable *int, flag Flag) {
-	cmd.Flags().IntVarP(variable, flag.FullName, flag.ShortName, 0, flag.Usage)
+	cmd.PersistentFlags().IntVarP(variable, flag.FullName, flag.ShortName, 0, flag.Usage)
 
 	// Flag not set, try env var
 	if *variable == 0 {
 		tmp := os.Getenv(flag.EnvVar)
 
-		// If it isn't set, that's ok.
-		if tmp == "" {
-			return
-		}
+		// If the env var is set, try to use it
+		if tmp != "" {
+			intVal, err := strconv.Atoi(tmp)
+			if err != nil {
+				logger.Fatal(flag.FullName + " needs to be an integer")
+				return
+			}
 
-		intVal, err := strconv.Atoi(tmp)
-		if err != nil {
-			log.Fatal(flag.FullName + " needs to be an integer")
+			*variable = intVal
 		}
-
-		*variable = intVal
 	}
 
 	// Flag and env var not set, look for default

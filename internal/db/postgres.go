@@ -43,7 +43,7 @@ func (p *Postgres) Connect() error {
 			retriesLeft--
 
 			if retriesLeft == 0 {
-				logger.Fatal("Failed to connect to Postgres!")
+				return logger.Fatal("Failed to connect to Postgres!")
 			} else {
 				logger.Errorf("Connecting to Postgres failed... retrying in %d seconds (%d retries left)",
 					p.Config.RetryBackoffSeconds,
@@ -66,14 +66,13 @@ func (p *Postgres) Close() error {
 	return sqlDb.Close()
 }
 
-func (p *Postgres) Setup(ctx context.Context) error {
-	tx, err := sqlDb.BeginTx(ctx, nil)
+func (p *Postgres) Setup(ctx context.Context) (*sql.Tx, error) {
+	setupTx, err := sqlDb.BeginTx(ctx, nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	defer tx.Rollback()
 
-	_, err = tx.ExecContext(ctx, fmt.Sprintf(`
+	_, err = setupTx.ExecContext(ctx, fmt.Sprintf(`
 		CREATE TABLE IF NOT EXISTS %s (
 			version BIGINT PRIMARY KEY,
 			status TEXT NOT NULL,
@@ -82,19 +81,24 @@ func (p *Postgres) Setup(ctx context.Context) error {
 		)
 	`, p.Config.MigrationsTableName))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	err = tx.Commit()
+	err = setupTx.Commit()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	tx, err := sqlDb.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return tx, nil
 }
 
-func (p *Postgres) GetCurrentVersion(ctx context.Context) (*int64, error) {
-	row := sqlDb.QueryRowContext(ctx, fmt.Sprintf(`
+func (p *Postgres) GetCurrentVersion(ctx context.Context, tx *sql.Tx) (*int64, error) {
+	row := tx.QueryRowContext(ctx, fmt.Sprintf(`
 		SELECT version FROM %s
 		WHERE status = 'applied'
 		ORDER BY version DESC
@@ -113,20 +117,9 @@ func (p *Postgres) GetCurrentVersion(ctx context.Context) (*int64, error) {
 	return &version, nil
 }
 
-func (p *Postgres) RunMigration(ctx context.Context, migration entity.Migration, content string) error {
+func (p *Postgres) RunMigration(ctx context.Context, tx *sql.Tx, migration entity.Migration, content string) error {
 	// TODO: Check for no transaction
-	tx, err := sqlDb.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-	defer tx.Commit()
-
-	_, err = sqlDb.ExecContext(ctx, content)
-	if err != nil {
-		return err
-	}
-
-	err = tx.Commit()
+	_, err := tx.ExecContext(ctx, content)
 	if err != nil {
 		return err
 	}
@@ -134,25 +127,14 @@ func (p *Postgres) RunMigration(ctx context.Context, migration entity.Migration,
 	return nil
 }
 
-func (p *Postgres) InsertMigration(ctx context.Context, migration entity.Migration) error {
-	tx, err := sqlDb.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-	defer tx.Rollback()
-
-	_, err = sqlDb.ExecContext(
+func (p *Postgres) InsertMigration(ctx context.Context, tx *sql.Tx, migration entity.Migration) error {
+	_, err := sqlDb.ExecContext(
 		ctx,
 		fmt.Sprintf(`
 			INSERT INTO %s (version, status) VALUES ($1, $2)
 		`, p.Config.MigrationsTableName),
 		migration.Version, string(migration.Status),
 	)
-	if err != nil {
-		return err
-	}
-
-	err = tx.Commit()
 	if err != nil {
 		return err
 	}
