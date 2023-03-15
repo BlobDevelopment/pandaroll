@@ -1,0 +1,58 @@
+name: Publish
+
+on:
+  release:
+    types: [published, edited]
+
+jobs:
+  publish-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Update major version tag
+        id: tagger
+        uses: Actions-R-Us/actions-tagger@latest
+
+      # This isn't great but the standard in Docker is just `<version>` whereas
+      # in GitHub releases, the standard is `v<version>`
+      # So we cut the v off to turn `v<version>` into `<version>`
+      - name: Get versions
+        id: versions
+        run: |
+          currentVersion=$(echo ${{ github.ref_name }} | cut -c2-)
+          echo "CURRENT_VERSION=$currentVersion" >> "$GITHUB_OUTPUT"
+
+          majorVersion=$(echo ${{ steps.tagger.outputs.tag }} | sed 's/tags\/v//g')
+          echo "MAJOR_VERSION=$majorVersion" >> "$GITHUB_OUTPUT"
+
+          echo "Publishing to: latest, $currentVersion, $majorVersion"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        id: publish
+        with:
+          context: .
+          push: true
+          platforms: |
+            linux/amd64
+            linux/arm/v6
+            linux/arm/v7
+            linux/arm64/v8
+          tags: |
+            blobdev/pandaroll-test:latest
+            blobdev/pandaroll-test:${{ steps.versions.outputs.CURRENT_VERSION }}
+            blobdev/pandaroll-test:${{ steps.versions.outputs.MAJOR_VERSION }}
