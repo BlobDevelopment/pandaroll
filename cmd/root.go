@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"blobdev.com/pandaroll/internal/build"
@@ -11,9 +12,10 @@ import (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "pandaroll",
-	Short: "Easy database migrations",
-	Long:  `Pandaroll is an easy migration tool`,
+	Use:     "pandaroll",
+	Short:   "Easy database migrations",
+	Long:    `Pandaroll is an easy migration tool`,
+	Version: fmt.Sprintf("%s (%s)", build.Version, build.Commit),
 	// hack: Silence usage so on error it doesn't spit it up
 	// https://github.com/spf13/cobra/issues/340
 	SilenceUsage: true,
@@ -22,11 +24,6 @@ var rootCmd = &cobra.Command{
 var config entity.Config
 
 func Execute() {
-	logger.Info("## Pandaroll ##")
-	logger.Infof("#  Version: %s", build.Version)
-	logger.Infof("#  Commit: %s", build.Commit)
-	logger.Info("")
-
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)
