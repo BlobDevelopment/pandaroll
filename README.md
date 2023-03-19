@@ -87,4 +87,7 @@ services:
       - DB_USERNAME=postgres
       - DB_PASSWORD=password
       - DB_DATABASE=test_database
+    volumes:
+      # Mount the local "migrations" folder
+      - ./migrations:/migrations
 ```
