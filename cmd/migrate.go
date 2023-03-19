@@ -78,6 +78,11 @@ var migrateCmd = &cobra.Command{
 			logger.Info("Migration succeeded!")
 		}
 
+		err = tx.Commit()
+		if err != nil {
+			return logger.Fatalf("Failed to commit migrations! Error: %s", err.Error())
+		}
+
 		logger.Infof("Applied %d migrations successfully!", len(migrations))
 		return nil
 	},

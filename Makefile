@@ -18,3 +18,6 @@ test:
 
 test-db:
 	docker-compose up
+
+down:
+	docker-compose down --volumes
