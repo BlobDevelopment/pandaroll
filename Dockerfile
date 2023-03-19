@@ -1,5 +1,7 @@
 FROM golang:1.19-alpine
 
+ENV MIGRATIONS_DIRECTORY=/migrations
+
 WORKDIR /usr/src/app
 
 COPY .git ./.git

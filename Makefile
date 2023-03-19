@@ -13,6 +13,7 @@ build:
 		-ldflags="-X 'blobdev.com/pandaroll/internal/build.Version=$(VERSION)'" \
 		-ldflags="-X 'blobdev.com/pandaroll/internal/build.Commit=$(COMMIT_HASH)'"
 
+.PHONY: test
 test:
 	go test ./... -v
 
