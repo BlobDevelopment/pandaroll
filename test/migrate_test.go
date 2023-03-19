@@ -62,8 +62,8 @@ func TestFlags(t *testing.T) {
 		// All flags are specified so it should pass flag verification and instead just fail due to no DB being
 		// setup
 		require.Error(t, err)
-		require.Equal(t, "Failed to setup DB! Error: dial tcp 0.0.0.0:5432: connect: connection refused\n", err.Error())
-		require.Equal(t, "Error: Failed to setup DB! Error: dial tcp 0.0.0.0:5432: connect: connection refused\n\n", output)
+		require.Equal(t, "Failed to connect to DB! Error: Failed to connect to Postgres!\n", err.Error())
+		require.Equal(t, "Error: Failed to connect to DB! Error: Failed to connect to Postgres!\n\n", output)
 	})
 }
 
