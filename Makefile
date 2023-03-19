@@ -10,8 +10,7 @@ build:
 
 	GOOS="${GOOS}" GOARCH="${GOARCH}" go build \
 		-o bin/pandaroll \
-		-ldflags="-X 'blobdev.com/pandaroll/internal/build.Version=$(VERSION)'" \
-		-ldflags="-X 'blobdev.com/pandaroll/internal/build.Commit=$(COMMIT_HASH)'"
+		-ldflags="-X 'blobdev.com/pandaroll/internal/build.Version=$(VERSION)' -X 'blobdev.com/pandaroll/internal/build.Commit=$(COMMIT_HASH)'"
 
 .PHONY: test
 test:
