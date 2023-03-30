@@ -56,17 +56,7 @@ Are you a Windows user and looking to use [Winget](https://learn.microsoft.com/e
 $ winget ...
 ```
 
-### Docker
-
-We can't forget good old [Docker](https://www.docker.com/). See also [Running] for putting it into `docker-compose` or just running the image directly.
-
-```bash
-$ docker pull blobdev/pandaroll:1
-```
-
-## Running
-
-### Docker
+## Docker
 
 Pandaroll is published on [Docker Hub](https://hub.docker.com/r/blobdev/pandaroll) for easy use.
 
