@@ -27,7 +27,7 @@ func (p *Postgres) Connect() error {
 		p.Config.Host, p.Config.Port, p.Config.Username, p.Config.Password, p.Config.Database,
 	)
 
-	logger.Infof("Attempting to connect to Postgres... (host: %s, port: %d, user: %s, database %s)",
+	logger.Infof("Attempting to connect to Postgres... (host: %s, port: %d, user: %s, database: %s)",
 		p.Config.Host, p.Config.Port, p.Config.Username, p.Config.Database,
 	)
 	db, err := sql.Open("postgres", psqlInfo)

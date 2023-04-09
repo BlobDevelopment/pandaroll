@@ -1,7 +1,6 @@
 package migrations
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -61,8 +60,6 @@ func GetUnappliedDownMigrations(config entity.Config, currentVersion int64, targ
 	}
 
 	migrations := []entity.Migration{}
-
-	fmt.Println("Current version:", currentVersion)
 
 	for _, file := range files {
 		ver := GetVersionFromFile(file.Name())
