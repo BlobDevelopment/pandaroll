@@ -1,6 +1,7 @@
 package migrations
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -53,7 +54,7 @@ func GetUnappliedUpMigrations(config entity.Config, currentVersion int64) []enti
 	return migrations
 }
 
-func GetUnappliedDownMigrations(config entity.Config, targetVersion int64) []entity.Migration {
+func GetUnappliedDownMigrations(config entity.Config, currentVersion int64, targetVersion int64) []entity.Migration {
 	files, err := os.ReadDir(config.MigrationsDirectoryName)
 	if err != nil {
 		logger.Fatalf("Failed to read migrations directory! Error: %s", err.Error())
@@ -61,16 +62,19 @@ func GetUnappliedDownMigrations(config entity.Config, targetVersion int64) []ent
 
 	migrations := []entity.Migration{}
 
+	fmt.Println("Current version:", currentVersion)
+
 	for _, file := range files {
 		ver := GetVersionFromFile(file.Name())
-		if !strings.HasSuffix(file.Name(), ".down.sql") || ver == nil {
+		if !strings.HasSuffix(file.Name(), ".down.sql") || ver == nil || file.IsDir() {
 			continue
 		}
 
-		if *ver > targetVersion {
+		if *ver <= currentVersion && *ver > targetVersion {
 			migrations = append(migrations, entity.Migration{
 				Version:       *ver,
 				Name:          file.Name(),
+				Path:          filepath.Join(config.MigrationsDirectoryName, file.Name()),
 				Up:            false,
 				NoTransaction: false, // TODO: Add support
 			})

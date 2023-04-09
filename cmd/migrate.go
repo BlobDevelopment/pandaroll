@@ -66,14 +66,24 @@ var migrateCmd = &cobra.Command{
 			if err != nil {
 				// Update DB
 				migration.Status = entity.MigrationError
-				db.InsertMigration(ctx, tx, migration)
+				err := db.UpsertMigration(ctx, tx, migration)
+				if err != nil {
+					return logger.Fatalf("Failed to insert migration update for '%s'! Error: %s",
+						migration.Name, err.Error(),
+					)
+				}
 
 				return logger.Fatalf("Failed to run migration '%s'! Error: %s", migration.Name, err.Error())
 			}
 
 			// Update DB
 			migration.Status = entity.MigrationApplied
-			db.InsertMigration(ctx, tx, migration)
+			err = db.UpsertMigration(ctx, tx, migration)
+			if err != nil {
+				return logger.Fatalf("Failed to insert migration update for '%s'! Error: %s",
+					migration.Name, err.Error(),
+				)
+			}
 
 			logger.Info("Migration succeeded!")
 		}

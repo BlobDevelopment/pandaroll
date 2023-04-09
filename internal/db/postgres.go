@@ -127,11 +127,13 @@ func (p *Postgres) RunMigration(ctx context.Context, tx *sql.Tx, migration entit
 	return nil
 }
 
-func (p *Postgres) InsertMigration(ctx context.Context, tx *sql.Tx, migration entity.Migration) error {
+func (p *Postgres) UpsertMigration(ctx context.Context, tx *sql.Tx, migration entity.Migration) error {
 	_, err := sqlDb.ExecContext(
 		ctx,
 		fmt.Sprintf(`
 			INSERT INTO %s (version, status) VALUES ($1, $2)
+			ON CONFLICT (version) DO UPDATE
+			SET status = $2
 		`, p.Config.MigrationsTableName),
 		migration.Version, string(migration.Status),
 	)

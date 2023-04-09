@@ -17,7 +17,7 @@ type Db interface {
 	Setup(ctx context.Context) (*sql.Tx, error)
 	GetCurrentVersion(ctx context.Context, tx *sql.Tx) (*int64, error)
 	RunMigration(ctx context.Context, tx *sql.Tx, migration entity.Migration, content string) error
-	InsertMigration(ctx context.Context, tx *sql.Tx, migration entity.Migration) error
+	UpsertMigration(ctx context.Context, tx *sql.Tx, migration entity.Migration) error
 }
 
 func GetDB(config entity.Config) (Db, error) {
